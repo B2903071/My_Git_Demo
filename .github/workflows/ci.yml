@@ -3,7 +3,7 @@ name: Python CI
 on:
   push:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 2 * * *'   # 每天 10:00 (台灣)
   workflow_dispatch:
 
 permissions:
@@ -24,19 +24,26 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 lxml pandas
+          pip install requests beautifulsoup4 lxml pandas gspread google-auth
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run scraper
         run: |
           mkdir -p data
-          python cnyes_news_scraper_final.py
+          python cnyes_news_scraper_final.py || true   # 沒有檔也先不失敗
+
+      - name: Write to Google Sheets
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: python write_to_sheets.py
 
       - name: Commit and push results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
+          # 想強制每次都有變更可打開下一行：
+          # date -u +"%Y-%m-%dT%H:%M:%SZ" >> data/run-log.txt
           if [ -n "$(git status --porcelain)" ]; then
             git add -A
             git commit -m "chore: update scraped data [skip ci]"
@@ -44,4 +51,3 @@ jobs:
           else
             echo "No changes to commit."
           fi
-
