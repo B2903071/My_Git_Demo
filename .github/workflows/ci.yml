@@ -3,20 +3,45 @@ name: Python CI
 on:
   push:
   schedule:
-    - cron: '0 2 * * *'  # UTC 時間每天 02:00 跑一次（台灣時間 +8）
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  test:
+  run-scraper:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 lxml pandas
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Run script
-        run: python cnyes_news_scraper_final.py
+
+      - name: Run scraper
+        run: |
+          mkdir -p data
+          python cnyes_news_scraper_final.py
+
+      - name: Commit and push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: update scraped data [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
