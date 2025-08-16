@@ -1,0 +1,43 @@
+tree gnuwin32
+brew install tree
+tree .
+
+
+建立資料夾：mkdir git-demo
+切換資料夾路徑：cd git-demo
+初始化：git init
+開啟VSCode：code .
+查詢檔案在git資料夾的狀態：git status
+即時顯示當前資料夾狀態：watch -n <時間間隔> -d <執行動作>
+表示每隔1秒顯示當前資料夾的狀態：watch -n 1 -d find .git
+刪除.git中用不到的檔案：rm -rf .git/hooks/*.sample  
+檔案加入追蹤：git add <檔案>
+確認寫入到本機端暫存區：git commit -m "修改說明"
+查詢檔案屬性：git cat-file -t <commit id hsa1>
+查詢檔案內容：git cat-file -p <commit id hsa1>
+查詢檔案大小：git cat-file -s <commit id hsa1>
+查詢檔案內容：cat <檔案名稱> 
+查詢檔案內容：cat .git/HEAD 
+查詢檔案內容：cat .git/refs/heads/master
+清除畫面：clear
+git檔案的指向：HEAD->master->commit->tree->blob
+查詢設定：git config –list / git config -l
+查詢全域設定：git config --global --list
+設定區域帳號：git config user.name 帳號
+設定區域信箱：git config user.email 信箱
+查詢區域設定：git config –local –list
+查詢當前區域設定.git/config：cat .git/config
+查詢目前分支：git branch -a / git branch
+建立分支：git branch <分支名稱>
+建立develop分支：git branch develop
+建立master分支：git branch master
+切換分支：git checkout <分支名稱>
+切換develop分支：git checkout develop
+建立分支後直接切換到該分支：git checkout -b <分支名稱>
+建立test分支後直接切換到該分支：git checkout -b test
+查詢資料夾檔案列表：ls
+查詢資料夾檔案列表屬性：ll
+資料夾檔案依據時間排序：ll -rt
+查詢commit 短記錄：git log –oneline
+合併檔案內容：git merge <分支名稱>
+重置：git reset –hard HEAD~
